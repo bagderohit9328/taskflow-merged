@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskFlow — Roles &amp; Access</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">📋</div><span class="logo-text">TaskFlow</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Workspace</div>
+      <a class="nav-link" href="/dashboard.html"><span class="nav-icon">⬡</span> Dashboard</a>
+      <a class="nav-link" href="/pages/tasks.html"><span class="nav-icon">✓</span> All Tasks</a>
+      <a class="nav-link" href="/pages/my-tasks.html"><span class="nav-icon">◎</span> My Tasks</a>
+      <a class="nav-link" href="/pages/team.html"><span class="nav-icon">◈</span> Team</a>
+      <a class="nav-link" href="/pages/reports.html"><span class="nav-icon">◧</span> Reports</a>
+      <div class="nav-section-label" style="margin-top:16px">Settings</div>
+      <a class="nav-link active" href="/pages/roles.html" id="nav-roles"><span class="nav-icon">◉</span> Roles &amp; Access</a>
+      <a class="nav-link" href="#" onclick="logout()"><span class="nav-icon">→</span> Sign Out</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">AR</div>
+      <div class="user-meta">
+        <div class="user-name" id="user-name">Loading…</div>
+        <div class="user-role" id="user-role">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <h1 class="page-heading">Roles &amp; Access Control</h1>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <!-- Permissions Matrix -->
+      <div class="panel" style="margin-bottom:20px">
+        <div class="panel-header"><span class="panel-title">Permission Matrix</span></div>
+        <div class="panel-body" style="padding:0;overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border2)">
+                <th style="text-align:left;padding:12px 20px;color:var(--text2);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Permission</th>
+                <th style="text-align:center;padding:12px 20px;color:var(--purple);font-weight:600">Admin</th>
+                <th style="text-align:center;padding:12px 20px;color:var(--teal);font-weight:600">Editor</th>
+                <th style="text-align:center;padding:12px 20px;color:var(--text2);font-weight:600">Viewer</th>
+              </tr>
+            </thead>
+            <tbody id="perm-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- User Role Management -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Team Members</span>
+          <span style="font-size:12px;color:var(--text2)" id="member-count"></span>
+        </div>
+        <div class="panel-body" id="members-list">
+          <div class="loading-spinner">Loading members…</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+const PERMISSIONS = [
+  ['Create Tasks',      true,  true,  false],
+  ['Assign Tasks',      true,  true,  false],
+  ['Edit Tasks',        true,  true,  false],
+  ['Delete Tasks',      true,  false, false],
+  ['Comment on Tasks',  true,  true,  true],
+  ['Upload Files',      true,  true,  false],
+  ['View Reports',      true,  true,  true],
+  ['Manage Users',      true,  false, false],
+  ['Change Roles',      true,  false, false],
+  ['System Settings',   true,  false, false],
+];
+
+document.addEventListener('DOMContentLoaded', async () => {
+  initUserUI();
+  renderPermMatrix();
+
+  // Redirect non-admins
+  const user = currentUser();
+  if (!user || user.role !== 'ADMIN') {
+    document.getElementById('members-list').innerHTML =
+      `<div class="empty-state"><div class="empty-state-text" style="color:var(--red)">
+        Admin access required to manage roles.</div></div>`;
+    return;
+  }
+
+  await loadMembers();
+});
+
+function renderPermMatrix() {
+  document.getElementById('perm-table').innerHTML = PERMISSIONS.map(([perm, a, e, v]) => `
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:11px 20px;color:var(--text)">${perm}</td>
+      <td style="text-align:center;padding:11px 20px">
+        <span style="color:${a ? 'var(--green)' : 'var(--red)'};font-size:16px">${a ? '✓' : '✕'}</span></td>
+      <td style="text-align:center;padding:11px 20px">
+        <span style="color:${e ? 'var(--green)' : 'var(--red)'};font-size:16px">${e ? '✓' : '✕'}</span></td>
+      <td style="text-align:center;padding:11px 20px">
+        <span style="color:${v ? 'var(--green)' : 'var(--red)'};font-size:16px">${v ? '✓' : '✕'}</span></td>
+    </tr>`).join('');
+}
+
+async function loadMembers() {
+  try {
+    const users = await Users.getAll();
+    document.getElementById('member-count').textContent = users.length + ' members';
+    document.getElementById('members-list').innerHTML = users.map(u => `
+      <div class="member-row">
+        ${avatarHtml(getInitials(u.fullName || u.username), avatarColor(u.id), 36)}
+        <div class="member-info">
+          <div class="member-name">${escHtml(u.fullName || u.username)}</div>
+          <div class="member-sub">${escHtml(u.email)}</div>
+        </div>
+        ${roleBadge(u.role)}
+        <select class="form-input" style="width:130px;padding:5px 10px;margin-left:10px"
+                onchange="changeRole(${u.id}, this.value)">
+          <option value="ADMIN"  ${u.role==='ADMIN'  ?'selected':''}>Admin</option>
+          <option value="EDITOR" ${u.role==='EDITOR' ?'selected':''}>Editor</option>
+          <option value="VIEWER" ${u.role==='VIEWER' ?'selected':''}>Viewer</option>
+        </select>
+        <button class="btn-secondary" style="margin-left:8px;padding:5px 12px;font-size:12px"
+                onclick="toggleActive(${u.id}, this, '${u.active}')">
+          ${u.active ? 'Deactivate' : 'Activate'}
+        </button>
+      </div>`).join('');
+  } catch (e) {
+    showToast('Failed to load members: ' + e.message, 'error');
+  }
+}
+
+async function changeRole(userId, newRole) {
+  try {
+    await Users.updateRole(userId, newRole);
+    showToast('Role updated to ' + newRole, 'success');
+    loadMembers();
+  } catch (e) {
+    showToast('Failed: ' + e.message, 'error');
+  }
+}
+
+async function toggleActive(userId, btn, currentActive) {
+  try {
+    await Users.toggleActive(userId);
+    showToast('User status updated.', 'success');
+    loadMembers();
+  } catch (e) {
+    showToast('Failed: ' + e.message, 'error');
+  }
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+</script>
+</body>
+</html>

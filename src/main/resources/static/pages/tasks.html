@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskFlow — All Tasks</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">📋</div><span class="logo-text">TaskFlow</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Workspace</div>
+      <a class="nav-link" href="/dashboard.html"><span class="nav-icon">⬡</span> Dashboard</a>
+      <a class="nav-link active" href="/pages/tasks.html"><span class="nav-icon">✓</span> All Tasks</a>
+      <a class="nav-link" href="/pages/my-tasks.html"><span class="nav-icon">◎</span> My Tasks</a>
+      <a class="nav-link" href="/pages/team.html"><span class="nav-icon">◈</span> Team</a>
+      <a class="nav-link" href="/pages/reports.html"><span class="nav-icon">◧</span> Reports</a>
+      <div class="nav-section-label" style="margin-top:16px">Settings</div>
+      <a class="nav-link" href="/pages/roles.html" id="nav-roles"><span class="nav-icon">◉</span> Roles &amp; Access</a>
+      <a class="nav-link" href="#" onclick="logout()"><span class="nav-icon">→</span> Sign Out</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">AR</div>
+      <div class="user-meta">
+        <div class="user-name" id="user-name">Loading…</div>
+        <div class="user-role" id="user-role">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <h1 class="page-heading">All Tasks</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <input class="search-input" type="text" placeholder="Search tasks…"
+                 id="search-input" oninput="filterTasks(this.value)">
+        </div>
+        <button class="btn-primary" id="btn-new-task" onclick="openTaskModal()">+ New Task</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <!-- Filters -->
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+        <div class="tab-bar" id="status-tabs">
+          <button class="tab-btn active" onclick="setStatusFilter('')">All</button>
+          <button class="tab-btn" onclick="setStatusFilter('TODO')">To Do</button>
+          <button class="tab-btn" onclick="setStatusFilter('IN_PROGRESS')">In Progress</button>
+          <button class="tab-btn" onclick="setStatusFilter('IN_REVIEW')">In Review</button>
+          <button class="tab-btn" onclick="setStatusFilter('DONE')">Done</button>
+        </div>
+        <select class="form-input" id="priority-filter" onchange="applyFilters()"
+                style="width:140px;padding:6px 10px">
+          <option value="">All Priorities</option>
+          <option value="CRITICAL">Critical</option>
+          <option value="HIGH">High</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="LOW">Low</option>
+        </select>
+        <select class="form-input" id="assignee-filter" onchange="applyFilters()"
+                style="width:160px;padding:6px 10px">
+          <option value="">All Members</option>
+        </select>
+      </div>
+
+      <div class="panel">
+        <div class="panel-body" style="padding:0">
+          <table class="task-table" id="task-table">
+            <thead>
+              <tr>
+                <th style="width:36px"></th>
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Assignee</th>
+                <th>Deadline</th>
+                <th style="width:80px">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="task-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">Loading tasks…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Task Modal -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeTaskModal()"></div>
+<div class="modal" id="task-modal">
+  <div class="modal-header">
+    <span class="modal-title" id="modal-title">New Task</span>
+    <button class="modal-close" onclick="closeTaskModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="edit-task-id">
+    <div class="form-group"><label class="form-label">Title *</label>
+      <input class="form-input" type="text" id="task-title" placeholder="Task title"></div>
+    <div class="form-group"><label class="form-label">Description</label>
+      <textarea class="form-input" id="task-desc" rows="3" placeholder="Optional…"></textarea></div>
+    <div class="form-row-2">
+      <div class="form-group"><label class="form-label">Assignee</label>
+        <select class="form-input" id="task-assignee"><option value="">Unassigned</option></select></div>
+      <div class="form-group"><label class="form-label">Priority</label>
+        <select class="form-input" id="task-priority">
+          <option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option>
+          <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
+        </select></div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group"><label class="form-label">Deadline</label>
+        <input class="form-input" type="date" id="task-deadline"></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-input" id="task-status">
+          <option value="TODO">To Do</option><option value="IN_PROGRESS">In Progress</option>
+          <option value="IN_REVIEW">In Review</option><option value="DONE">Done</option>
+        </select></div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-secondary" onclick="closeTaskModal()">Cancel</button>
+    <button class="btn-primary" onclick="saveTask()">Save Task</button>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-backdrop" id="detail-backdrop" onclick="closeDetailModal()"></div>
+<div class="modal modal-lg" id="detail-modal">
+  <div class="modal-header">
+    <span class="modal-title" id="detail-title">Task Details</span>
+    <button class="modal-close" onclick="closeDetailModal()">✕</button>
+  </div>
+  <div class="modal-body" id="detail-body"></div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/tasks-page.js"></script>
+</body>
+</html>

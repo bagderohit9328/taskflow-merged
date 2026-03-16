@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow — My Tasks</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">📋</div>
+            <span class="logo-text">TaskFlow</span>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Workspace</div>
+            <a class="nav-link" href="/dashboard.html"><span class="nav-icon">⬡</span> Dashboard</a>
+            <a class="nav-link" href="/pages/tasks.html"><span class="nav-icon">✓</span> All Tasks</a>
+            <a class="nav-link active" href="/pages/my-tasks.html"><span class="nav-icon">◎</span> My Tasks</a>
+            <a class="nav-link" href="/pages/team.html"><span class="nav-icon">◈</span> Team</a>
+            <a class="nav-link" href="/pages/reports.html"><span class="nav-icon">◧</span> Reports</a>
+            <div class="nav-section-label" style="margin-top:16px">Settings</div>
+            <a class="nav-link" href="/pages/roles.html" id="nav-roles"><span class="nav-icon">◉</span> Roles &amp; Access</a>
+            <a class="nav-link" href="#" onclick="logout()"><span class="nav-icon">→</span> Sign Out</a>
+        </nav>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="user-avatar">ME</div>
+            <div class="user-meta">
+                <div class="user-name" id="user-name">Loading…</div>
+                <div class="user-role" id="user-role">—</div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main-area">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+                <h1 class="page-heading">My Tasks</h1>
+            </div>
+            <div class="topbar-right">
+                <div class="search-wrap">
+                    <input class="search-input" type="text" placeholder="Search my tasks…"
+                           id="search-input" oninput="filterTasks(this.value)">
+                </div>
+            </div>
+        </header>
+
+        <main class="page-content">
+
+            <!-- Personal stats -->
+            <div class="stats-grid" id="my-stats">
+                <div class="stat-card blue"><div class="stat-label">Assigned To Me</div><div class="stat-value" id="ms-total">—</div></div>
+                <div class="stat-card amber"><div class="stat-label">In Progress</div><div class="stat-value" id="ms-progress">—</div></div>
+                <div class="stat-card green"><div class="stat-label">Completed</div><div class="stat-value" id="ms-done">—</div></div>
+                <div class="stat-card red"><div class="stat-label">Overdue</div><div class="stat-value" id="ms-overdue">—</div></div>
+            </div>
+
+            <!-- Status filter tabs -->
+            <div class="tab-bar" id="status-tabs">
+                <button class="tab-btn active" onclick="setTab(this,'')">All</button>
+                <button class="tab-btn" onclick="setTab(this,'TODO')">To Do</button>
+                <button class="tab-btn" onclick="setTab(this,'IN_PROGRESS')">In Progress</button>
+                <button class="tab-btn" onclick="setTab(this,'IN_REVIEW')">In Review</button>
+                <button class="tab-btn" onclick="setTab(this,'DONE')">Done</button>
+            </div>
+
+            <!-- Task kanban-style list -->
+            <div id="my-task-list">
+                <div class="loading-spinner">Loading your tasks…</div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-backdrop" id="detail-backdrop" onclick="closeDetailModal()"></div>
+<div class="modal modal-lg" id="detail-modal">
+    <div class="modal-header">
+        <span class="modal-title" id="detail-title">Task Details</span>
+        <button class="modal-close" onclick="closeDetailModal()">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/my-tasks.js"></script>
+</body>
+</html>

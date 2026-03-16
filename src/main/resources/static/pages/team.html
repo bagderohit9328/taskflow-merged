@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow — Team</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">📋</div>
+            <span class="logo-text">TaskFlow</span>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Workspace</div>
+            <a class="nav-link" href="/dashboard.html"><span class="nav-icon">⬡</span> Dashboard</a>
+            <a class="nav-link" href="/pages/tasks.html"><span class="nav-icon">✓</span> All Tasks</a>
+            <a class="nav-link" href="/pages/my-tasks.html"><span class="nav-icon">◎</span> My Tasks</a>
+            <a class="nav-link active" href="/pages/team.html"><span class="nav-icon">◈</span> Team</a>
+            <a class="nav-link" href="/pages/reports.html"><span class="nav-icon">◧</span> Reports</a>
+            <div class="nav-section-label" style="margin-top:16px">Settings</div>
+            <a class="nav-link" href="/pages/roles.html" id="nav-roles"><span class="nav-icon">◉</span> Roles &amp; Access</a>
+            <a class="nav-link" href="#" onclick="logout()"><span class="nav-icon">→</span> Sign Out</a>
+        </nav>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="user-avatar">ME</div>
+            <div class="user-meta">
+                <div class="user-name" id="user-name">Loading…</div>
+                <div class="user-role" id="user-role">—</div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main-area">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+                <h1 class="page-heading">Team</h1>
+            </div>
+            <div class="topbar-right">
+                <div class="search-wrap">
+                    <input class="search-input" type="text" placeholder="Search members…"
+                           id="search-input" oninput="filterMembers(this.value)">
+                </div>
+            </div>
+        </header>
+
+        <main class="page-content">
+
+            <!-- Team stats row -->
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px" id="team-stats">
+                <div class="stat-card blue"><div class="stat-label">Total Members</div><div class="stat-value" id="ts-members">—</div></div>
+                <div class="stat-card green"><div class="stat-label">Active Tasks</div><div class="stat-value" id="ts-active">—</div></div>
+                <div class="stat-card amber"><div class="stat-label">Completion Rate</div><div class="stat-value" id="ts-rate">—</div></div>
+            </div>
+
+            <!-- Member cards grid -->
+            <div id="member-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
+                <div class="loading-spinner" style="grid-column:1/-1">Loading team…</div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Member detail panel -->
+<div class="modal-backdrop" id="member-backdrop" onclick="closeMemberPanel()"></div>
+<div class="modal" id="member-modal" style="width:460px">
+    <div class="modal-header">
+        <span class="modal-title" id="member-modal-title">Member Profile</span>
+        <button class="modal-close" onclick="closeMemberPanel()">✕</button>
+    </div>
+    <div class="modal-body" id="member-modal-body"></div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/team.js"></script>
+</body>
+</html>

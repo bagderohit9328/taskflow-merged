@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskFlow — Dashboard</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ── Sidebar ──────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">📋</div>
+      <span class="logo-text">TaskFlow</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Workspace</div>
+      <a class="nav-link active" href="/dashboard.html" data-page="dashboard">
+        <span class="nav-icon">⬡</span> Dashboard
+      </a>
+      <a class="nav-link" href="/pages/tasks.html" data-page="tasks">
+        <span class="nav-icon">✓</span> All Tasks
+        <span class="nav-badge" id="badge-tasks">0</span>
+      </a>
+      <a class="nav-link" href="/pages/my-tasks.html" data-page="my-tasks">
+        <span class="nav-icon">◎</span> My Tasks
+        <span class="nav-badge" id="badge-my-tasks">0</span>
+      </a>
+      <a class="nav-link" href="/pages/team.html" data-page="team">
+        <span class="nav-icon">◈</span> Team
+      </a>
+      <a class="nav-link" href="/pages/reports.html" data-page="reports">
+        <span class="nav-icon">◧</span> Reports
+      </a>
+
+      <div class="nav-section-label" style="margin-top:16px;">Settings</div>
+      <a class="nav-link" href="/pages/roles.html" data-page="roles" id="nav-roles">
+        <span class="nav-icon">◉</span> Roles &amp; Access
+      </a>
+      <a class="nav-link" href="#" onclick="logout()">
+        <span class="nav-icon">→</span> Sign Out
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">AR</div>
+      <div class="user-meta">
+        <div class="user-name" id="user-name">Loading…</div>
+        <div class="user-role" id="user-role">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ─────────────────────── -->
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <h1 class="page-heading">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <input class="search-input" type="text" placeholder="Search tasks…" id="search-input"
+                 oninput="handleSearch(this.value)">
+        </div>
+        <button class="btn-primary" id="btn-new-task" onclick="openTaskModal()">+ New Task</button>
+      </div>
+    </header>
+
+    <main class="page-content" id="page-content">
+      <!-- Stats Row -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card blue"><div class="stat-label">Total Tasks</div><div class="stat-value" id="stat-total">—</div></div>
+        <div class="stat-card green"><div class="stat-label">Completed</div><div class="stat-value" id="stat-done">—</div></div>
+        <div class="stat-card amber"><div class="stat-label">In Progress</div><div class="stat-value" id="stat-progress">—</div></div>
+        <div class="stat-card red"><div class="stat-label">Overdue</div><div class="stat-value" id="stat-overdue">—</div></div>
+      </div>
+
+      <!-- Two-column layout -->
+      <div class="dashboard-grid">
+        <!-- Task List -->
+        <div class="panel" id="panel-tasks">
+          <div class="panel-header">
+            <span class="panel-title">Active Tasks</span>
+            <a href="/pages/tasks.html" class="panel-link">View all →</a>
+          </div>
+          <div class="panel-body" id="task-list-container">
+            <div class="loading-spinner">Loading tasks…</div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="right-col">
+          <!-- Progress -->
+          <div class="panel">
+            <div class="panel-header"><span class="panel-title">Sprint Progress</span></div>
+            <div class="panel-body" id="progress-container">
+              <div class="loading-spinner">Loading…</div>
+            </div>
+          </div>
+
+          <!-- Team snapshot -->
+          <div class="panel" style="margin-top:16px;">
+            <div class="panel-header">
+              <span class="panel-title">Team</span>
+              <a href="/pages/team.html" class="panel-link">View all →</a>
+            </div>
+            <div class="panel-body" id="team-snapshot">
+              <div class="loading-spinner">Loading…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ── New / Edit Task Modal ──────────────── -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeTaskModal()"></div>
+<div class="modal" id="task-modal">
+  <div class="modal-header">
+    <span class="modal-title" id="modal-title">New Task</span>
+    <button class="modal-close" onclick="closeTaskModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="edit-task-id">
+    <div class="form-group">
+      <label class="form-label">Title *</label>
+      <input class="form-input" type="text" id="task-title" placeholder="Task title">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-input" id="task-desc" rows="3" placeholder="Optional description…"></textarea>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group">
+        <label class="form-label">Assignee</label>
+        <select class="form-input" id="task-assignee"><option value="">Unassigned</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Priority</label>
+        <select class="form-input" id="task-priority">
+          <option value="LOW">Low</option>
+          <option value="MEDIUM" selected>Medium</option>
+          <option value="HIGH">High</option>
+          <option value="CRITICAL">Critical</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group">
+        <label class="form-label">Deadline</label>
+        <input class="form-input" type="date" id="task-deadline">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-input" id="task-status">
+          <option value="TODO">To Do</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="IN_REVIEW">In Review</option>
+          <option value="DONE">Done</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-secondary" onclick="closeTaskModal()">Cancel</button>
+    <button class="btn-primary" onclick="saveTask()">Save Task</button>
+  </div>
+</div>
+
+<!-- ── Task Detail Modal ───────────────────── -->
+<div class="modal-backdrop" id="detail-backdrop" onclick="closeDetailModal()"></div>
+<div class="modal modal-lg" id="detail-modal">
+  <div class="modal-header">
+    <span class="modal-title" id="detail-title">Task Details</span>
+    <button class="modal-close" onclick="closeDetailModal()">✕</button>
+  </div>
+  <div class="modal-body" id="detail-body"></div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/dashboard.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/websocket.js"></script>
+</body>
+</html>
