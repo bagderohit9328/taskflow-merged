@@ -8,7 +8,6 @@ import java.util.List;
 
 public class TaskDTOs {
 
-    // ── Create/Update Request ──────────────────────────
     @Getter @Setter
     public static class TaskRequest {
         @NotBlank @Size(max = 255)
@@ -25,7 +24,7 @@ public class TaskDTOs {
         private Long assigneeId;
     }
 
-    // ── Full Response ──────────────────────────────────
+
     @Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
     public static class TaskResponse {
         private Long id;
@@ -83,7 +82,6 @@ public class TaskDTOs {
         }
     }
 
-    // ── Report/Analytics ──────────────────────────────
     @Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
     public static class ReportResponse {
         private long totalTasks;

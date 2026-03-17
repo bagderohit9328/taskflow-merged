@@ -187,7 +187,9 @@ public class TaskService {
         if (user.getRole() == User.Role.VIEWER) {
             throw new AccessDeniedException("Viewers cannot edit tasks");
         }
-        if (user.getRole() == User.Role.EDITOR
+        // Non-admins can only edit tasks they created or are assigned to
+        if (user.getRole() != User.Role.ADMIN
+                && user.getRole() != User.Role.MANAGER
                 && !task.getCreatedBy().getId().equals(user.getId())
                 && (task.getAssignee() == null || !task.getAssignee().getId().equals(user.getId()))) {
             throw new AccessDeniedException("You can only edit tasks you created or are assigned to");

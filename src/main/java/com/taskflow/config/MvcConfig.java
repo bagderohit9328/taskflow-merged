@@ -6,11 +6,6 @@ import org.springframework.web.servlet.config.annotation.*;
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
 
-    /**
-     * Serve static files from classpath:/static/
-     * Spring Boot does this automatically, but we also
-     * add a resource handler for /uploads/ (user-uploaded files).
-     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Serve uploaded task files from the filesystem
@@ -22,9 +17,6 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/");
     }
 
-    /**
-     * Redirect bare "/" to the login page.
-     */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addRedirectViewController("/", "/index.html");

@@ -37,13 +37,26 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Static UI (Spring Boot serves from classpath:/static/)
+                .requestMatchers(
+                        "/",
+                        "/index.html",
+                        "/register.html",
+                        "/reset-password.html",
+                        "/dashboard.html",
+                        "/pages/**",
+                        "/css/**",
+                        "/js/**",
+                        "/favicon.ico",
+                        "/error"
+                ).permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 // Role-based access
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/users/roles/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers("/api/users/roles/**").hasAnyRole("ADMIN", "MANAGER")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

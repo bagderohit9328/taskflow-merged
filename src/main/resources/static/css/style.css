@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════
-   TaskFlow — Global Styles
+   Amdox Task Flow — Global Styles
    ══════════════════════════════════════════════ */
 :root {
   --bg:       #0d1117;
@@ -306,7 +306,11 @@ textarea.form-input { resize: vertical; }
   font-weight: 600;
 }
 .role-ADMIN  { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(188,140,255,.25); }
-.role-EDITOR { background: var(--teal-bg);   color: var(--teal);   border: 1px solid rgba(57,197,207,.25); }
+.role-MANAGER { background: var(--teal-bg);   color: var(--teal);   border: 1px solid rgba(57,197,207,.25); }
+.role-DEVELOPER { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(88,166,255,.25); }
+.role-TESTER { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(210,153,34,.25); }
+.role-DEVOPS { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(188,140,255,.25); }
+.role-PRODUCTION { background: var(--green-bg); color: var(--green); border: 1px solid rgba(63,185,80,.25); }
 .role-VIEWER { background: var(--bg4);       color: var(--text2);  border: 1px solid var(--border2); }
 
 /* ── Scrollbar ───────────────────────────── */

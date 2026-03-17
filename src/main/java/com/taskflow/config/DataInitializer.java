@@ -39,21 +39,21 @@ public class DataInitializer implements CommandLineRunner {
                 .active(true)
                 .build());
 
-        User editor1 = userRepository.save(User.builder()
+        User developer = userRepository.save(User.builder()
                 .username("sarah")
                 .email("sarah@taskflow.com")
                 .password(passwordEncoder.encode("sarah123"))
                 .fullName("Sarah Kim")
-                .role(User.Role.EDITOR)
+                .role(User.Role.DEVELOPER)
                 .active(true)
                 .build());
 
-        User editor2 = userRepository.save(User.builder()
+        User tester = userRepository.save(User.builder()
                 .username("mike")
                 .email("mike@taskflow.com")
                 .password(passwordEncoder.encode("mike123"))
                 .fullName("Mike Desai")
-                .role(User.Role.EDITOR)
+                .role(User.Role.TESTER)
                 .active(true)
                 .build());
 
@@ -83,7 +83,7 @@ public class DataInitializer implements CommandLineRunner {
                 .priority(Task.Priority.HIGH)
                 .status(Task.Status.IN_REVIEW)
                 .deadline(LocalDate.now().plusDays(4))
-                .assignee(editor1)
+                .assignee(developer)
                 .createdBy(admin)
                 .build());
 
@@ -93,7 +93,7 @@ public class DataInitializer implements CommandLineRunner {
                 .priority(Task.Priority.CRITICAL)
                 .status(Task.Status.DONE)
                 .deadline(LocalDate.now().minusDays(2))
-                .assignee(editor2)
+                .assignee(tester)
                 .createdBy(admin)
                 .build());
 
@@ -114,16 +114,16 @@ public class DataInitializer implements CommandLineRunner {
                 .status(Task.Status.TODO)
                 .deadline(LocalDate.now().plusDays(12))
                 .assignee(viewer)
-                .createdBy(editor1)
+                .createdBy(developer)
                 .build());
 
         taskRepository.save(Task.builder()
                 .title("Role-based access control")
-                .description("Enforce ADMIN / EDITOR / VIEWER permissions across all API endpoints using @PreAuthorize.")
+                .description("Enforce role-based permissions across all API endpoints using @PreAuthorize.")
                 .priority(Task.Priority.HIGH)
                 .status(Task.Status.IN_PROGRESS)
                 .deadline(LocalDate.now().plusDays(5))
-                .assignee(editor1)
+                .assignee(developer)
                 .createdBy(admin)
                 .build());
 
@@ -133,7 +133,7 @@ public class DataInitializer implements CommandLineRunner {
                 .priority(Task.Priority.MEDIUM)
                 .status(Task.Status.TODO)
                 .deadline(LocalDate.now().plusDays(17))
-                .assignee(editor2)
+                .assignee(tester)
                 .createdBy(admin)
                 .build());
 
@@ -154,7 +154,7 @@ public class DataInitializer implements CommandLineRunner {
                 .status(Task.Status.TODO)
                 .deadline(LocalDate.now().plusDays(20))
                 .assignee(admin)
-                .createdBy(editor1)
+                .createdBy(developer)
                 .build());
 
         taskRepository.save(Task.builder()
@@ -163,7 +163,7 @@ public class DataInitializer implements CommandLineRunner {
                 .priority(Task.Priority.LOW)
                 .status(Task.Status.TODO)
                 .deadline(LocalDate.now().plusDays(25))
-                .assignee(editor2)
+                .assignee(tester)
                 .createdBy(admin)
                 .build());
 

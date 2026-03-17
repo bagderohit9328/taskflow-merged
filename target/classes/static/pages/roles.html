@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TaskFlow — Roles &amp; Access</title>
+<title>Amdox Task Flow — Roles &amp; Access</title>
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
 <div class="app-layout">
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo"><div class="logo-icon">📋</div><span class="logo-text">TaskFlow</span></div>
+    <div class="sidebar-logo"><div class="logo-icon">📋</div><span class="logo-text">Amdox Task Flow</span></div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Workspace</div>
       <a class="nav-link" href="/dashboard.html"><span class="nav-icon">⬡</span> Dashboard</a>
@@ -49,7 +49,7 @@
               <tr style="border-bottom:1px solid var(--border2)">
                 <th style="text-align:left;padding:12px 20px;color:var(--text2);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Permission</th>
                 <th style="text-align:center;padding:12px 20px;color:var(--purple);font-weight:600">Admin</th>
-                <th style="text-align:center;padding:12px 20px;color:var(--teal);font-weight:600">Editor</th>
+                <th style="text-align:center;padding:12px 20px;color:var(--teal);font-weight:600">Manager</th>
                 <th style="text-align:center;padding:12px 20px;color:var(--text2);font-weight:600">Viewer</th>
               </tr>
             </thead>
@@ -79,13 +79,13 @@ const PERMISSIONS = [
   ['Create Tasks',      true,  true,  false],
   ['Assign Tasks',      true,  true,  false],
   ['Edit Tasks',        true,  true,  false],
-  ['Delete Tasks',      true,  false, false],
+  ['Delete Tasks',      true,  true,  false],
   ['Comment on Tasks',  true,  true,  true],
   ['Upload Files',      true,  true,  false],
   ['View Reports',      true,  true,  true],
-  ['Manage Users',      true,  false, false],
-  ['Change Roles',      true,  false, false],
-  ['System Settings',   true,  false, false],
+  ['Manage Users',      true,  true,  false],
+  ['Change Roles',      true,  true,  false],
+  ['System Settings',   true,  true,  false],
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -94,10 +94,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Redirect non-admins
   const user = currentUser();
-  if (!user || user.role !== 'ADMIN') {
+  if (!user || (user.role !== 'ADMIN' && user.role !== 'MANAGER')) {
     document.getElementById('members-list').innerHTML =
       `<div class="empty-state"><div class="empty-state-text" style="color:var(--red)">
-        Admin access required to manage roles.</div></div>`;
+        Admin/Manager access required to manage roles.</div></div>`;
     return;
   }
 
@@ -129,11 +129,15 @@ async function loadMembers() {
           <div class="member-sub">${escHtml(u.email)}</div>
         </div>
         ${roleBadge(u.role)}
-        <select class="form-input" style="width:130px;padding:5px 10px;margin-left:10px"
+        <select class="form-input" style="width:150px;padding:5px 10px;margin-left:10px"
                 onchange="changeRole(${u.id}, this.value)">
           <option value="ADMIN"  ${u.role==='ADMIN'  ?'selected':''}>Admin</option>
-          <option value="EDITOR" ${u.role==='EDITOR' ?'selected':''}>Editor</option>
-          <option value="VIEWER" ${u.role==='VIEWER' ?'selected':''}>Viewer</option>
+          <option value="MANAGER"    ${u.role==='MANAGER'    ?'selected':''}>Manager</option>
+          <option value="DEVELOPER"  ${u.role==='DEVELOPER'  ?'selected':''}>Developer</option>
+          <option value="TESTER"     ${u.role==='TESTER'     ?'selected':''}>Tester</option>
+          <option value="DEVOPS"     ${u.role==='DEVOPS'     ?'selected':''}>DevOps</option>
+          <option value="PRODUCTION" ${u.role==='PRODUCTION' ?'selected':''}>Production</option>
+          <option value="VIEWER"     ${u.role==='VIEWER'     ?'selected':''}>Viewer</option>
         </select>
         <button class="btn-secondary" style="margin-left:8px;padding:5px 12px;font-size:12px"
                 onclick="toggleActive(${u.id}, this, '${u.active}')">

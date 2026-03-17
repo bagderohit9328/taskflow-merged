@@ -1,15 +1,18 @@
 package com.taskflow.dto;
 
 import com.taskflow.entity.User;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-// ── Login ──────────────────────────────────────────────
 public class AuthDTOs {
 
     @Getter @Setter
     public static class LoginRequest {
-        @NotBlank private String username;
+
+        @NotBlank
+        @JsonAlias("username")
+        private String email;
         @NotBlank private String password;
     }
 
@@ -53,5 +56,26 @@ public class AuthDTOs {
                     .createdAt(u.getCreatedAt() != null ? u.getCreatedAt().toString() : null)
                     .build();
         }
+    }
+
+    @Getter @Setter
+    public static class ForgotPasswordRequest {
+        @NotBlank @Email
+        private String email;
+    }
+
+    @Getter @Setter
+    public static class ResetPasswordRequest {
+        @NotBlank
+        private String token;
+
+        @NotBlank
+        @Size(min = 6, max = 100)
+        private String newPassword;
+    }
+
+    @Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
+    public static class GenericMessageResponse {
+        private String message;
     }
 }

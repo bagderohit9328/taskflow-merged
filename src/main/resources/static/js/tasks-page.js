@@ -205,7 +205,7 @@ async function openDetailModal(taskId) {
 
     document.getElementById('detail-title').textContent = task.title;
     const user = currentUser();
-    const canEdit = user && (user.role === 'ADMIN' || user.role === 'EDITOR');
+    const canEdit = user && (user.role !== 'VIEWER');
 
     body.innerHTML = `
       <div class="detail-grid">

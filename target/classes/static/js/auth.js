@@ -5,7 +5,11 @@
 // Redirect to dashboard if already logged in
 (function guardAuth() {
   const path = window.location.pathname;
-  const isAuthPage = path.endsWith('index.html') || path.endsWith('register.html') || path === '/';
+  const isAuthPage =
+    path.endsWith('index.html') ||
+    path.endsWith('register.html') ||
+    path.endsWith('reset-password.html') ||
+    path === '/';
   const token = localStorage.getItem('tf_token');
 
   if (token && isAuthPage) {
@@ -24,7 +28,7 @@ async function login() {
   errEl.style.display = 'none';
 
   if (!username || !password) {
-    errEl.textContent = 'Please enter username and password.';
+    errEl.textContent = 'Please enter email/username and password.';
     errEl.style.display = 'block';
     return;
   }
@@ -93,7 +97,7 @@ function initUserUI() {
   if (avatarEl) avatarEl.textContent = getInitials(user.fullName || user.username);
 
   // Hide admin-only nav items for non-admins
-  if (user.role !== 'ADMIN') {
+  if (user.role !== 'ADMIN' && user.role !== 'MANAGER') {
     const rolesNav = document.getElementById('nav-roles');
     if (rolesNav) rolesNav.style.display = 'none';
   }

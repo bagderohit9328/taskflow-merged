@@ -45,7 +45,7 @@ public class User {
     @Builder.Default
     private boolean active = true;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = UserRoleConverter.class)
     @Column(nullable = false, length = 20)
     @Builder.Default
     private Role role = Role.VIEWER;
@@ -66,6 +66,12 @@ public class User {
     private Set<Task> createdTasks = new HashSet<>();
 
     public enum Role {
-        ADMIN, EDITOR, VIEWER
+        ADMIN,
+        MANAGER,
+        DEVELOPER,
+        TESTER,
+        DEVOPS,
+        PRODUCTION,
+        VIEWER
     }
 }

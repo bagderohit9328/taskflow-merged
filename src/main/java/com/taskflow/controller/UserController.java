@@ -17,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','EDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
@@ -28,14 +28,14 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/role")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<UserResponse> updateRole(@PathVariable Long id,
                                                     @RequestParam User.Role role) {
         return ResponseEntity.ok(userService.updateUserRole(id, role));
     }
 
     @PatchMapping("/{id}/toggle-active")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<UserResponse> toggleActive(@PathVariable Long id) {
         return ResponseEntity.ok(userService.toggleUserActive(id));
     }

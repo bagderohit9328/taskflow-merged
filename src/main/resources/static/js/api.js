@@ -34,6 +34,8 @@ async function apiFetch(path, options = {}) {
 const Auth = {
   login:    (body) => apiFetch('/api/auth/login',    { method: 'POST', body: JSON.stringify(body) }),
   register: (body) => apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify(body) }),
+  forgotPassword: (body) => apiFetch('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(body) }),
+  resetPassword:  (body) => apiFetch('/api/auth/reset-password',  { method: 'POST', body: JSON.stringify(body) }),
 };
 
 // ── Tasks ─────────────────────────────────────
