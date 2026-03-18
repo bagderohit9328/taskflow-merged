@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: amdox-task-flow
+    env: java
+    plan: free
+    buildCommand: ./mvnw -DskipTests package
+    startCommand: java -jar target/taskflow-app-1.0.0.jar
+    healthCheckPath: /
+    envVars:
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: APP_FRONTEND_BASE_URL
+        value: https://amdox-task-flow.onrender.com
+      - key: APP_PASSWORD_RESET_DEBUG_RETURN_TOKEN
+        value: "false"
+      - key: APP_CORS_ALLOWED_ORIGINS
+        value: https://amdox-task-flow.onrender.com
+      # Set this in Render dashboard as a Secret (do NOT commit a real secret):
+      - key: APP_JWT_SECRET
+        generateValue: true
+      # DB connection (wire these from the Render Postgres below):
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: amdox-task-flow-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: amdox-task-flow-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: amdox-task-flow-db
+          property: password
+
+databases:
+  - name: amdox-task-flow-db
+    plan: free
