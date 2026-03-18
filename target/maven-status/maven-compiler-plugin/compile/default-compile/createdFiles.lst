@@ -25,6 +25,7 @@ com\taskflow\repository\TaskFileRepository.class
 com\taskflow\dto\AuthDTOs$ForgotPasswordRequest.class
 com\taskflow\entity\PasswordResetToken$PasswordResetTokenBuilder.class
 com\taskflow\repository\TaskRepository.class
+com\taskflow\config\DatasourceUrlEnvironmentPostProcessor.class
 com\taskflow\dto\TaskDTOs$AssigneeInfo.class
 com\taskflow\dto\TaskDTOs$StatusCount.class
 com\taskflow\entity\Task$Priority.class
